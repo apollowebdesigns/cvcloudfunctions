@@ -6,10 +6,14 @@ import Response from './interfaces/response';
 const responder: string = 'this uses an interface!';
 
 export const helloWorld = functions.https.onRequest((request, response) => {
+    let arr: Response[] = new Array<Response>();
     console.log(request);
+    arr.push({
+        response: 'test'
+    })
     const finalResponse: Response = {
         response: responder
     }
 
-    response.send(finalResponse);
+    response.send(arr);
 });
