@@ -23,21 +23,13 @@ let database = admin.database();
 // https://firebase.google.com/docs/functions/typescript
 
 const main = (request, response, next) => {
-    let test = database.ref('test').set({
-        username: 'test',
-        email: 'email',
-        profile_picture : 'imageUrl'
-      });
     let arr: Response[] = new Array<Response>();
     console.log(request);
     arr.push({
         response: 'test'
     });
 
-    database.ref('test').once('value').then(function(snapshot) {
-        next();
-        // response.send(snapshot);
-    });
+    next();
 }
 
 app.use(corsAccess);
@@ -46,7 +38,19 @@ app.get('/hello', (req, res) => {
     res.send('this is an express app');
 });
 app.get('/second', (req, res) => {
-    res.send('this a second route!');
+    database.ref('test').once('value').then(function(snapshot) {
+        res.send('this a second route!');
+    }).catch(error => {
+        res.send('an error happened: ' + error);
+    });
+});
+app.post('/send', (req, res) => {
+    database.ref('test').set({
+        username: 'test',
+        email: 'email',
+        random: Math.random(),
+        profile_picture : 'imageUrl'
+    }).then(out => res.send(out));
 });
 
 export const helloWorld = functions.https.onRequest(app);
