@@ -38,9 +38,9 @@ app.get('/hello', (req, res) => {
     res.send('this is an express app');
 });
 app.get('/second', (req, res) => {
-    database.ref('test').once('value').then(function(snapshot) {
-        res.send('this a second route!');
-    }).catch(error => {
+    database.ref('test').once('value').then(snapshot => 
+        res.send(snapshot)
+    ).catch(error => {
         res.send('an error happened: ' + error);
     });
 });
