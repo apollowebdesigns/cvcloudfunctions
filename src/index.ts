@@ -45,5 +45,8 @@ app.use(main);
 app.get('/hello', (req, res) => {
     res.send('this is an express app');
 });
+app.get('/second', (req, res) => {
+    res.send('this a second route!');
+});
 
 export const helloWorld = functions.https.onRequest(app);
