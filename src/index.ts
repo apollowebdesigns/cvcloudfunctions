@@ -14,7 +14,7 @@ admin.initializeApp(config);
 import * as express from 'express';
 const app = express();
 
-let corsAccess = cors({origin: true});
+let corsAccess = cors();
 
 // Get a reference to the database service
 let database = admin.database();
