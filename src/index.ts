@@ -2,25 +2,20 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import Response from './interfaces/response';
 import * as path from 'path';
+import * as express from 'express';
 import * as cors from 'cors';
+
 let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
 const config = {
     credential: admin.credential.cert(serviceThing),
     databaseURL: 'https://userddata.firebaseio.com'
 };
-admin.initializeApp(config);
-
-import * as express from 'express';
 const app = express();
 
-let corsAccess = cors();
-
-// Get a reference to the database service
-let database = admin.database();
-
-// Start writing Firebase Functions
-// https://firebase.google.com/docs/functions/typescript
+admin.initializeApp(config);
+const corsAccess = cors();
+const database = admin.database();
 
 const main = (request, response, next) => {
     let arr: Response[] = new Array<Response>();
@@ -28,7 +23,6 @@ const main = (request, response, next) => {
     arr.push({
         response: 'test'
     });
-
     next();
 }
 
