@@ -31,7 +31,7 @@ app.use(main);
 app.get('/hello', (req, res) => {
     res.send('this is an express app');
 });
-app.get('/second', (req, res) => {
+app.get('/weatherdata', (req, res) => {
     database.ref('test').once('value').then(snapshot => 
         res.send(snapshot)
     ).catch(error => {
