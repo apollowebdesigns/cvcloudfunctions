@@ -29,6 +29,11 @@ const main = (request, response, next) => {
 app.use(corsAccess);
 app.use(main);
 app.get('/hello', (req, res) => {
+    // Get a reference to the storage service, which is used to create references in your storage bucket
+    const storage = admin.storage();
+
+    // Create a storage reference from our storage service
+    const storageRef = storage;
     res.send('this is an express app');
 });
 app.get('/weatherdata', (req, res) => {
