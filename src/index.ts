@@ -37,9 +37,15 @@ app.get('/hello', (req, res) => {
     res.send('this is an express app');
 });
 app.get('/weatherdata', (req, res) => {
-    database.ref('test').once('value').then(snapshot => 
+    database.ref('test').once('value').then(snapshot => {
+        let result: any[] = new Array();
+        Object.entries(snapshot).forEach(([key, value]) => {
+          const mappy = new Map();
+          mappy.set(key, value);
+          result.push(mappy);
+        });
         res.send(snapshot)
-    ).catch(error => {
+    }).catch(error => {
         res.send('an error happened: ' + error);
     });
 });
