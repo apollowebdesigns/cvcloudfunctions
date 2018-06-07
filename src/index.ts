@@ -39,12 +39,10 @@ app.get('/hello', (req, res) => {
 app.get('/weatherdata', (req, res) => {
     database.ref('test').once('value').then(snapshot => {
         let result: any[] = new Array();
-        Object.entries(snapshot).forEach(([key, value]) => {
-          const mappy = new Map();
-          mappy.set(key, value);
-          result.push(mappy);
-        });
-        res.send(snapshot)
+        const myData = Object.keys(snapshot).map(key => {
+            return snapshot[key];
+        })
+        res.send(snapshot);
     }).catch(error => {
         res.send('an error happened: ' + error);
     });
