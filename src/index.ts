@@ -6,6 +6,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as graphqlHTTP from 'express-graphql';
 import { buildSchema } from 'graphql';
+import { json } from '../node_modules/@types/body-parser';
 
 let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
@@ -28,13 +29,37 @@ const main = (request, response, next) => {
     next();
 }
 
+let requiredData: any[] = new Array();
+
+function getDataFromDatabase() {
+    return database.ref('test').once('value').then(snapshot => {
+        const myData = Object.keys(snapshot).map(key => {
+            return snapshot[key];
+        })
+        requiredData.push(snapshot);
+    }).catch(error => {
+        console.log('error happened');
+        console.log(error);
+    });
+}
+
+// Init the data
+getDataFromDatabase();
+
 const schema = buildSchema(`
   type Query {
     hello: String
   }
 `);
 
+const weatherschema = buildSchema(`
+  type Query {
+    weather: String
+  }
+`);
+
 const root = { hello: () => 'Hello world!' };
+const weatherRoot = { weather: () => JSON.stringify(requiredData) };
 
 app.use(corsAccess);
 app.use(main);
@@ -53,6 +78,11 @@ app.get('/hello', (req, res) => {
     const storageRef = storage;
     res.send('this is an express app');
 });
+app.use('/weathergraph', graphqlHTTP({
+    schema: weatherschema,
+    rootValue: weatherRoot,
+    graphiql: true,
+}));;
 app.get('/weatherdata', (req, res) => {
     database.ref('test').once('value').then(snapshot => {
         let result: any[] = new Array();
