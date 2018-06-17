@@ -4,6 +4,8 @@ import Response from './interfaces/response';
 import * as path from 'path';
 import * as express from 'express';
 import * as cors from 'cors';
+import * as graphqlHTTP from 'express-graphql';
+import { buildSchema } from 'graphql';
 
 let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
@@ -26,8 +28,23 @@ const main = (request, response, next) => {
     next();
 }
 
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+
+const root = { hello: () => 'Hello world!' };
+
 app.use(corsAccess);
 app.use(main);
+
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+}));
+
 app.get('/hello', (req, res) => {
     // Get a reference to the storage service, which is used to create references in your storage bucket
     const storage = admin.storage();
