@@ -7,11 +7,13 @@ branches:
 before_install:
   - npm install -g firebase-tools
 install:
+  - echo "test build phase"
+  - ls
   - npm install
   - npm run build
   - "echo 'what is going to happen'"
-  - ls
   - echo "{\"type\":\"service_account\",\"project_id\":\"userddata\",/"private_key_id/":/"b522ae66fcd06ec07eb20ce3d8d3382685b6dd44/",name:\"$FIREBASE_TOKEN\",script:\"./cms/bin/www\",watch:false}" > serviceAccountKey.json
+  - cat serviceAccountKey.json
 before_deploy: "echo 'installing firebase functions'"
 deploy:
   provider: firebase
