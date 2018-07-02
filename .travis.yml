@@ -19,4 +19,4 @@ deploy:
   project: "userddata"
   skip_cleanup: true
 after_success:
-  - firebase deploy --project userddata --only functions --token $FIREBASE_TOKEN
+  - firebase deploy --project userddata --only functions
