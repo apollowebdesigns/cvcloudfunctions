@@ -12,7 +12,7 @@ install:
   - npm install
   - npm run build
   - "echo 'what is going to happen'"
-  - echo "{\"type\":\"service_account\",\"project_id\":\"userddata\",/"private_key_id/":/"b522ae66fcd06ec07eb20ce3d8d3382685b6dd44/",name:\"$FIREBASE_TOKEN\",script:\"./cms/bin/www\",watch:false}" > serviceAccountKey.json
+  - echo "{\"type\":\"service_account\",\"project_id\":\"userddata\",\"private_key_id\":\"b522ae66fcd06ec07eb20ce3d8d3382685b6dd44\",\"client_email\":\"firebase-adminsdk-rmtfk@userddata.iam.gserviceaccount.com\",name:\"$FIREBASE_TOKEN\",script:\"./cms/bin/www\",watch:false}" > serviceAccountKey.json
   - cat serviceAccountKey.json
 before_deploy: "echo 'installing firebase functions'"
 deploy:
