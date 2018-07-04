@@ -7,6 +7,8 @@ import * as cors from 'cors';
 import * as graphqlHTTP from 'express-graphql';
 import { buildSchema } from 'graphql';
 import { json } from '../node_modules/@types/body-parser';
+import *  as got from 'got';
+import { from } from 'rxjs';
 
 let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
@@ -21,11 +23,6 @@ const corsAccess = cors();
 const database = admin.database();
 
 const main = (request, response, next) => {
-    let arr: Response[] = new Array<Response>();
-    console.log(request);
-    arr.push({
-        response: 'test'
-    });
     next();
 }
 
@@ -82,17 +79,28 @@ app.use('/weathergraph', graphqlHTTP({
     schema: weatherschema,
     rootValue: weatherRoot,
     graphiql: true,
-}));;
+}));
 app.get('/weatherdata', (req, res) => {
     database.ref('test').once('value').then(snapshot => {
         let result: any[] = new Array();
-        let keys = Object.keys(snapshot);
-        const myData = Object.keys(snapshot).map(key => {
-            return snapshot[key];
+        console.log('snapshot');
+        console.log(JSON.stringify(snapshot));
+        const snapshotData = snapshot.val();
+        const keys = Object.keys(snapshot.val());
+        keys.forEach(dataStuff => {
+            let test = new Object();
+            test[dataStuff] = snapshotData[dataStuff];
+            result.push(test);
         })
-        res.send(JSON.stringify(snapshot));
+        res.send(result);
     }).catch(error => {
         res.send('an error happened: ' + error);
+    });
+});
+app.get('/data', (req, res) => {
+    const data = from(got('https://us-central1-userddata.cloudfunctions.net/helloWorld/weatherdata'));
+    data.subscribe(data1 => {
+        res.send(data1);
     });
 });
 app.post('/send', (req, res) => {
