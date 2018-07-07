@@ -10,6 +10,24 @@ import { json } from '../node_modules/@types/body-parser';
 import *  as got from 'got';
 import { from } from 'rxjs';
 
+function formatDateTimeToDate(isoDate: string) {
+    let date = new Date(isoDate);
+    let year = date.getFullYear();
+    let month = date.getMonth()+1;
+    let dt = date.getDate();
+    let monthString: string;
+    let dtString: string;
+
+    if (dt < 10) {
+        dtString = '0' + dt;
+    }
+    if (month < 10) {
+        monthString = '0' + month;
+    }
+
+    return year+'-' + monthString + '-' + dtString;
+}
+
 let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
 const config = {
@@ -30,10 +48,11 @@ let requiredData: any[] = new Array();
 
 function getDataFromDatabase() {
     return database.ref('test').once('value').then(snapshot => {
-        const myData = Object.keys(snapshot).map(key => {
-            return snapshot[key];
+        let snapshot1 = snapshot.val();
+        const myData = Object.keys(snapshot1).map(key => {
+            return snapshot1[key];
         })
-        requiredData.push(snapshot);
+        requiredData.push(snapshot1);
     }).catch(error => {
         console.log('error happened');
         console.log(error);
@@ -56,7 +75,7 @@ const weatherschema = buildSchema(`
 `);
 
 const root = { hello: () => 'Hello world!' };
-const weatherRoot = { weather: () => JSON.stringify(requiredData) };
+const weatherRoot = { weather: () => JSON.stringify(requiredData)};
 
 app.use(corsAccess);
 app.use(main);
@@ -93,6 +112,26 @@ app.get('/weatherdata', (req, res) => {
             result.push(test);
         })
         res.send(result);
+    }).catch(error => {
+        res.send('an error happened: ' + error);
+    });
+});
+app.get('/dailyaverage', (req, res) => {
+    database.ref('test').once('value').then(snapshot => {
+        let result: any[] = new Array();
+        const snapshotData = snapshot.val();
+        const keys = Object.keys(snapshot.val());
+        let result1: any[] = new Array();
+        let dayAverage = new Object(); 
+        keys.forEach(dataStuff => {
+            dayAverage[formatDateTimeToDate(dataStuff)] = [];
+        });
+
+        keys.forEach(dataStuff => {
+            dayAverage[formatDateTimeToDate(dataStuff)].push(snapshotData[dataStuff]);
+        });
+
+        res.send(dayAverage);
     }).catch(error => {
         res.send('an error happened: ' + error);
     });
