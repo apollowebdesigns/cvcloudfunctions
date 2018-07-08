@@ -148,7 +148,17 @@ app.get('/dailyaverage', (req, res) => {
             // console.log(total);
             dayAverage[dataStuff] = average;
         });
-        res.send(dayAverage);
+
+        // Convert to json
+
+        let endArray = new Array();
+        let averageKeys = Object.keys(dayAverage);
+        averageKeys.forEach(data => {
+            let datum = new Object();
+            datum[data] = dayAverage[data];
+            endArray.push(datum);
+        });
+        res.send(endArray);
     }).catch(error => {
         res.send('an error happened: ' + error);
     });
