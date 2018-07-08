@@ -9,6 +9,7 @@ import { buildSchema } from 'graphql';
 import { json } from '../node_modules/@types/body-parser';
 import *  as got from 'got';
 import { from } from 'rxjs';
+import * as moment from 'moment';
 
 function formatDateTimeToDate(isoDate: string) {
     const date = new Date(isoDate);
@@ -125,11 +126,11 @@ app.get('/dailyaverage', (req, res) => {
         // let result1: any[] = new Array();
         let dayAverage = new Object(); 
         keys.forEach(dataStuff => {
-            dayAverage[formatDateTimeToDate(dataStuff)] = [];
+            dayAverage[moment(dataStuff).format('YYYY-MM-DD')] = [];
         });
 
         keys.forEach(dataStuff => {
-            dayAverage[formatDateTimeToDate(dataStuff)].push(snapshotData[dataStuff]);
+            dayAverage[moment(dataStuff).format('YYYY-MM-DD')].push(snapshotData[dataStuff]);
         });
 
         const dayAverageKeys = Object.keys(dayAverage);
@@ -139,9 +140,12 @@ app.get('/dailyaverage', (req, res) => {
             const valuesLength = values.length;
             let total: number = 0;
             values.forEach(value => {
-                total += value;
+                console.log(JSON.stringify(value));
+                total += Number(value.temperature);
             });
             const average: number = total / valuesLength;
+            console.log('total is');
+            // console.log(total);
             dayAverage[dataStuff] = average;
         });
         res.send(dayAverage);
