@@ -11,10 +11,10 @@ import *  as got from 'got';
 import { from } from 'rxjs';
 
 function formatDateTimeToDate(isoDate: string) {
-    let date = new Date(isoDate);
-    let year = date.getFullYear();
-    let month = date.getMonth()+1;
-    let dt = date.getDate();
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = date.getMonth()+1;
+    const dt = date.getDate();
     let monthString: string;
     let dtString: string;
 
@@ -119,10 +119,10 @@ app.get('/weatherdata', (req, res) => {
 app.get('/dailyaverage', (req, res) => {
     // TODO complete calculating daily average for the data - test it!
     database.ref('test').once('value').then(snapshot => {
-        let result: any[] = new Array();
+        // let result: any[] = new Array();
         const snapshotData = snapshot.val();
         const keys = Object.keys(snapshot.val());
-        let result1: any[] = new Array();
+        // let result1: any[] = new Array();
         let dayAverage = new Object(); 
         keys.forEach(dataStuff => {
             dayAverage[formatDateTimeToDate(dataStuff)] = [];
@@ -142,7 +142,7 @@ app.get('/dailyaverage', (req, res) => {
                 total += value;
             });
             const average: number = total / valuesLength;
-            dayAverage[formatDateTimeToDate(dataStuff)] = average;
+            dayAverage[dataStuff] = average;
         });
         res.send(dayAverage);
     }).catch(error => {
