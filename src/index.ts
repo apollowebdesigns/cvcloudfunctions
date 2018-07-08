@@ -126,11 +126,11 @@ app.get('/dailyaverage', (req, res) => {
         // let result1: any[] = new Array();
         let dayAverage = new Object(); 
         keys.forEach(dataStuff => {
-            dayAverage[moment(dataStuff).format('YYYY-MM-DD')] = [];
+            dayAverage[moment(dataStuff).format('dddd YYYY-MM-DD')] = [];
         });
 
         keys.forEach(dataStuff => {
-            dayAverage[moment(dataStuff).format('YYYY-MM-DD')].push(snapshotData[dataStuff]);
+            dayAverage[moment(dataStuff).format('dddd YYYY-MM-DD')].push(snapshotData[dataStuff]);
         });
 
         const dayAverageKeys = Object.keys(dayAverage);
