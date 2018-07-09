@@ -109,13 +109,12 @@ app.use('/weathergraph', graphqlHTTP({
     rootValue: weatherRoot,
     graphiql: true,
 }));
+
 app.get('/weatherdata', (req, res) => {
     database.ref('test').once('value').then(snapshot => {
         let result: any[] = new Array();
-        console.log('snapshot');
-        console.log(JSON.stringify(snapshot));
         const snapshotData = snapshot.val();
-        const keys = Object.keys(snapshot.val());
+        const keys = Object.keys(snapshotData);
         keys.forEach(dataStuff => {
             let test = new Object();
             test[dataStuff] = snapshotData[dataStuff];
@@ -126,10 +125,11 @@ app.get('/weatherdata', (req, res) => {
         res.send('an error happened: ' + error);
     });
 });
+
 app.get('/dailyaverage', (req, res) => {
     database.ref('test').once('value').then(snapshot => {
         const snapshotData = snapshot.val();
-        const keys = Object.keys(snapshot.val());
+        const keys = Object.keys(snapshotData);
         let dayAverage = new Object(); 
         keys.forEach(dataStuff => {
             dayAverage[moment(dataStuff).format('dddd YYYY-MM-DD')] = [];
@@ -146,7 +146,6 @@ app.get('/dailyaverage', (req, res) => {
             const valuesLength = values.length;
             let total: number = 0;
             values.forEach(value => {
-                console.log(JSON.stringify(value));
                 total += Number(value.temperature);
             });
             const average: number = total / valuesLength;
@@ -154,7 +153,6 @@ app.get('/dailyaverage', (req, res) => {
         });
 
         // Convert to json
-
         let endArray = new Array();
         let averageKeys = Object.keys(dayAverage);
         averageKeys.forEach(data => {
@@ -167,12 +165,14 @@ app.get('/dailyaverage', (req, res) => {
         res.send('an error happened: ' + error);
     });
 });
+
 app.get('/data', (req, res) => {
     const data = from(got('https://us-central1-userddata.cloudfunctions.net/helloWorld/weatherdata'));
     data.subscribe(data1 => {
         res.send(data1);
     });
 });
+
 app.post('/send', (req, res) => {
     database.ref('test').set({
         username: 'test',
