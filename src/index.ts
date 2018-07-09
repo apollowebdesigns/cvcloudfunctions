@@ -33,7 +33,8 @@ let serviceThing: string = __dirname + '/serviceAccountKey.json';
 serviceThing = serviceThing.replace('/lib', '');
 const config = {
     credential: admin.credential.cert(serviceThing),
-    databaseURL: 'https://userddata.firebaseio.com'
+    databaseURL: 'https://userddata.firebaseio.com',
+    storageBucket: 'gs://userddata.appspot.com'
 };
 const app = express();
 
@@ -95,6 +96,14 @@ app.get('/hello', (req, res) => {
     const storageRef = storage;
     res.send('this is an express app');
 });
+
+app.get('/store', (req, res) => {
+    // Get a reference to the storage service, which is used to create references in your storage bucket
+    const storage = admin.storage();
+    const jsonStore = storage.bucket('gs://userddata.appspot.com/test.json');
+    res.send(jsonStore);
+});
+
 app.use('/weathergraph', graphqlHTTP({
     schema: weatherschema,
     rootValue: weatherRoot,
