@@ -101,7 +101,7 @@ app.get('/store', (req, res) => {
     // Get a reference to the storage service, which is used to create references in your storage bucket
     const storage = admin.storage();
     const jsonStore = storage.bucket('gs://userddata.appspot.com/test.json');
-    res.send(jsonStore.get());
+    res.send(jsonStore.getMetadata());
 });
 
 app.use('/weathergraph', graphqlHTTP({
