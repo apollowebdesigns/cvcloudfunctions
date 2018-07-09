@@ -118,12 +118,9 @@ app.get('/weatherdata', (req, res) => {
     });
 });
 app.get('/dailyaverage', (req, res) => {
-    // TODO complete calculating daily average for the data - test it!
     database.ref('test').once('value').then(snapshot => {
-        // let result: any[] = new Array();
         const snapshotData = snapshot.val();
         const keys = Object.keys(snapshot.val());
-        // let result1: any[] = new Array();
         let dayAverage = new Object(); 
         keys.forEach(dataStuff => {
             dayAverage[moment(dataStuff).format('dddd YYYY-MM-DD')] = [];
@@ -144,8 +141,6 @@ app.get('/dailyaverage', (req, res) => {
                 total += Number(value.temperature);
             });
             const average: number = total / valuesLength;
-            console.log('total is');
-            // console.log(total);
             dayAverage[dataStuff] = average;
         });
 
